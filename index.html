@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego de Ahorcado</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="game-shell">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">Reto educativo</p>
+        <h1>Ahorcado</h1>
+      </div>
+      <button class="secondary-button" id="new-game-button" type="button">Nueva palabra</button>
+    </section>
+
+    <section class="game-layout" aria-label="Juego de ahorcado">
+      <article class="hangman-panel">
+        <div class="hangman-drawing" aria-label="Dibujo del ahorcado">
+          <div class="gallows base"></div>
+          <div class="gallows pole"></div>
+          <div class="gallows beam"></div>
+          <div class="gallows rope"></div>
+          <div class="body-part head"></div>
+          <div class="body-part torso"></div>
+          <div class="body-part left-arm"></div>
+          <div class="body-part right-arm"></div>
+          <div class="body-part left-leg"></div>
+          <div class="body-part right-leg"></div>
+        </div>
+        <p class="attempts" id="attempts-text">Intentos restantes: 6</p>
+      </article>
+
+      <article class="play-panel">
+        <p class="status" id="status-text">Elige una letra para comenzar.</p>
+        <div class="word" id="word-display" aria-live="polite"></div>
+
+        <div class="hint-box">
+          <button class="hint-button" id="hint-button" type="button">Mostrar pista</button>
+          <p id="hint-text">La pista aparecerá aquí.</p>
+        </div>
+
+        <div class="keyboard" id="keyboard" aria-label="Teclado de letras"></div>
+
+        <form class="guess-form" id="guess-form">
+          <label for="full-word-input">¿Ya sabes la palabra?</label>
+          <div class="guess-row">
+            <input id="full-word-input" type="text" autocomplete="off" placeholder="Escribe la palabra completa">
+            <button type="submit">Comprobar</button>
+          </div>
+        </form>
+      </article>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
