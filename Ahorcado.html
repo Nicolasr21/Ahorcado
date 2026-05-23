@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego del Ahorcado</title>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background: linear-gradient(135deg,#1e3c72,#2a5298);
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            color:white;
+        }
+
+        .contenedor{
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding:30px;
+            border-radius:20px;
+            width:90%;
+            max-width:700px;
+            text-align:center;
+            box-shadow:0 0 20px rgba(0,0,0,0.3);
+        }
+
+        h1{
+            margin-bottom:20px;
+            font-size:40px;
+        }
+
+        .palabra{
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            margin:30px 0;
+            flex-wrap:wrap;
+        }
+
+        .letra{
+            width:45px;
+            height:55px;
+            border-bottom:3px solid white;
+            font-size:35px;
+            text-align:center;
+            line-height:55px;
+            text-transform:uppercase;
+        }
+
+        .teclado{
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:center;
+            gap:10px;
+            margin-top:20px;
+        }
+
+        button{
+            padding:10px 15px;
+            border:none;
+            border-radius:10px;
+            cursor:pointer;
+            font-weight:bold;
+            transition:0.3s;
+        }
+
+        .tecla{
+            background:white;
+            color:#1e3c72;
+        }
+
+        .tecla:hover{
+            background:#dbe7ff;
+        }
+
+        .desactivada{
+            background:gray !important;
+            color:white;
+            cursor:not-allowed;
+        }
+
+        .info{
+            margin-top:20px;
+            font-size:20px;
+        }
+
+        .controles{
+            margin-top:25px;
+        }
+
+        input{
+            padding:10px;
+            width:250px;
+            border-radius:10px;
+            border:none;
+            margin-right:10px;
+            font-size:16px;
+        }
+
+        .pista{
+            margin-top:15px;
+            font-size:18px;
+            color:#ffe082;
+        }
+
+        .mensaje{
+            margin-top:20px;
+            font-size:24px;
+            font-weight:bold;
+        }
+
+        .reiniciar{
+            margin-top:20px;
+            background:#00c853;
+            color:white;
+        }
+
+        .pistaBtn{
+            background:#ff9800;
+            color:white;
+        }
+
+        .adivinarBtn{
+            background:#00b0ff;
+            color:white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+
+    <h1>Juego del Ahorcado</h1>
+
+    <div class="info">
+        Intentos restantes: <span id="intentos">6</span>
+    </div>
+
+    <div class="palabra" id="palabra"></div>
+
+    <div class="teclado" id="teclado"></div>
+
+    <div class="controles">
+        <button class="pistaBtn" onclick="mostrarPista()">Mostrar pista</button>
+    </div>
+
+    <div class="pista" id="pista"></div>
+
+    <div class="controles">
+        <input type="text" id="inputPalabra" placeholder="Escribe la palabra">
+        <button class="adivinarBtn" onclick="adivinarPalabra()">Adivinar</button>
+    </div>
+
+    <div class="mensaje" id="mensaje"></div>
+
+    <button class="reiniciar" onclick="iniciarJuego()">Nuevo Juego</button>
+
+</div>
+
+<script>
+
+const palabras = [
+    {
+        palabra: "educación",
+        pista: "Proceso de enseñanza y aprendizaje."
+    },
+    {
+        palabra: "tecnología",
+        pista: "Conjunto de herramientas y avances digitales."
+    },
+    {
+        palabra: "conocimiento",
+        pista: "Información adquirida mediante estudio o experiencia."
+    },
+    {
+        palabra: "vocación",
+        pista: "Inclinación hacia una profesión o actividad."
+    },
+    {
+        palabra: "robótica",
+        pista: "Área relacionada con robots y automatización."
+    },
+    {
+        palabra: "enseñanza",
+        pista: "Acción de transmitir conocimientos."
+    },
+    {
+        palabra: "aprendizaje",
+        pista: "Proceso de adquirir nuevos conocimientos."
+    }
+];
+
+let palabraSeleccionada = "";
+let pistaSeleccionada = "";
+let letrasCorrectas = [];
+let intentos = 6;
+
+const palabraDiv = document.getElementById("palabra");
+const tecladoDiv = document.getElementById("teclado");
+const intentosSpan = document.getElementById("intentos");
+const mensajeDiv = document.getElementById("mensaje");
+const pistaDiv = document.getElementById("pista");
+
+function iniciarJuego(){
+
+    const aleatoria = palabras[Math.floor(Math.random() * palabras.length)];
+
+    palabraSeleccionada = aleatoria.palabra.toLowerCase();
+    pistaSeleccionada = aleatoria.pista;
+
+    letrasCorrectas = [];
+    intentos = 6;
+
+    intentosSpan.textContent = intentos;
+    mensajeDiv.textContent = "";
+    pistaDiv.textContent = "";
+
+    crearPalabra();
+    crearTeclado();
+}
+
+function crearPalabra(){
+
+    palabraDiv.innerHTML = "";
+
+    for(let letra of palabraSeleccionada){
+
+        const letraDiv = document.createElement("div");
+        letraDiv.classList.add("letra");
+
+        if(letrasCorrectas.includes(letra)){
+            letraDiv.textContent = letra;
+        }else{
+            letraDiv.textContent = "";
+        }
+
+        palabraDiv.appendChild(letraDiv);
+    }
+}
+
+function crearTeclado(){
+
+    tecladoDiv.innerHTML = "";
+
+    const letras = "abcdefghijklmnñopqrstuvwxyzáéíóú";
+
+    for(let letra of letras){
+
+        const boton = document.createElement("button");
+
+        boton.textContent = letra;
+        boton.classList.add("tecla");
+
+        boton.addEventListener("click", () => verificarLetra(letra, boton));
+
+        tecladoDiv.appendChild(boton);
+    }
+}
+
+function verificarLetra(letra, boton){
+
+    boton.disabled = true;
+    boton.classList.add("desactivada");
+
+    if(palabraSeleccionada.includes(letra)){
+
+        letrasCorrectas.push(letra);
+
+    }else{
+
+        intentos--;
+        intentosSpan.textContent = intentos;
+    }
+
+    crearPalabra();
+    verificarEstado();
+}
+
+function verificarEstado(){
+
+    let ganaste = true;
+
+    for(let letra of palabraSeleccionada){
+
+        if(!letrasCorrectas.includes(letra)){
+            ganaste = false;
+        }
+    }
+
+    if(ganaste){
+        mensajeDiv.textContent = "🎉 ¡Ganaste!";
+        desactivarTeclado();
+    }
+
+    if(intentos <= 0){
+        mensajeDiv.textContent = `❌ Perdiste. La palabra era: ${palabraSeleccionada}`;
+        mostrarPalabraCompleta();
+        desactivarTeclado();
+    }
+}
+
+function mostrarPalabraCompleta(){
+
+    palabraDiv.innerHTML = "";
+
+    for(let letra of palabraSeleccionada){
+
+        const letraDiv = document.createElement("div");
+
+        letraDiv.classList.add("letra");
+        letraDiv.textContent = letra;
+
+        palabraDiv.appendChild(letraDiv);
+    }
+}
+
+function desactivarTeclado(){
+
+    const botones = document.querySelectorAll(".tecla");
+
+    botones.forEach(boton => {
+        boton.disabled = true;
+    });
+}
+
+function mostrarPista(){
+    pistaDiv.textContent = "💡 Pista: " + pistaSeleccionada;
+}
+
+function adivinarPalabra(){
+
+    const entrada = document.getElementById("inputPalabra").value.toLowerCase();
+
+    if(entrada === palabraSeleccionada){
+
+        mensajeDiv.textContent = "🎉 ¡Correcto! Adivinaste la palabra.";
+
+        mostrarPalabraCompleta();
+        desactivarTeclado();
+
+    }else{
+
+        intentos--;
+
+        intentosSpan.textContent = intentos;
+
+        mensajeDiv.textContent = "❌ Palabra incorrecta";
+
+        verificarEstado();
+    }
+
+    document.getElementById("inputPalabra").value = "";
+}
+
+iniciarJuego();
+
+</script>
+
+</body>
+</html>
